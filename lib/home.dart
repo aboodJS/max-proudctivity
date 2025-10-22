@@ -25,10 +25,23 @@ class _InputBoxState extends State<InputBox> {
   addTodo() {
     setState(() {
       if (textController.text != "") {
-        tasks = [...tasks, textController.text];
+        tasks = [
+          ...tasks,
+          {"task": textController.text, "id": tasks.length},
+        ];
         textController.text = '';
         print(tasks);
       }
+    });
+  }
+
+  removeTodo(taskKey) {
+    print(taskKey);
+    List filtered = tasks.where((element) => element["id"] != taskKey).toList();
+    print(filtered);
+
+    setState(() {
+      tasks = [...filtered];
     });
   }
 
@@ -40,12 +53,28 @@ class _InputBoxState extends State<InputBox> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        TextField(
-          decoration: InputDecoration(hintText: "write the task"),
-          controller: textController,
+        Center(
+          child: SizedBox(
+            width: 300,
+            child: TextField(
+              decoration: InputDecoration(hintText: "write the task"),
+              controller: textController,
+            ),
+          ),
         ),
         FilledButton(onPressed: addTodo, child: const Text("add Task")),
-        for (int i = 0; i < tasks.length; i++) Text('${i + 1}. ${tasks[i]}'),
+        Padding(padding: EdgeInsetsGeometry.all(7)),
+        for (int i = 0; i < tasks.length; i++)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(key: Key("$i"), '${i + 1}. ${tasks[i]['task']}'),
+              FilledButton(
+                onPressed: () => removeTodo(tasks[i]['id']),
+                child: Text("check task"),
+              ),
+            ],
+          ),
       ],
     );
   }
