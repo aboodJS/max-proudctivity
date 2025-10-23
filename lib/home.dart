@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -28,10 +27,7 @@ class _InputBoxState extends State<InputBox> {
   addTodo() {
     setState(() {
       if (textController.text != "") {
-        tasks = [
-          ...tasks,
-          {"task": textController.text, "id": tasks.length},
-        ];
+        tasks = [...tasks, textController.text];
 
         textController.text = '';
         print(tasks);
@@ -41,7 +37,7 @@ class _InputBoxState extends State<InputBox> {
 
   removeTodo(taskKey) {
     print(taskKey);
-    List filtered = tasks.where((element) => element["id"] != taskKey).toList();
+    List filtered = tasks.where((element) => element != taskKey).toList();
     print(filtered);
 
     setState(() {
@@ -72,9 +68,9 @@ class _InputBoxState extends State<InputBox> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Text(key: Key("$i"), '${i + 1}. ${tasks[i]['task']}'),
+              Text(key: Key("$i"), '${i + 1}. ${tasks[i]}'),
               FilledButton(
-                onPressed: () => removeTodo(tasks[i]['id']),
+                onPressed: () => removeTodo(tasks[i]),
                 child: Text("check task"),
               ),
             ],
