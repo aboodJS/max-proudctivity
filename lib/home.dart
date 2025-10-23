@@ -53,15 +53,6 @@ class _InputBoxState extends State<InputBox> {
     await prefs.setStringList('tasks', tasks);
   }
 
-  readData() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    // Save the counter value to persistent storage under the 'counter' key.
-    setState(() {
-      tasks = prefs.getStringList('tasks');
-    });
-  }
-
   final textController = TextEditingController();
 
   List<String> tasks = [];
