@@ -29,33 +29,22 @@ class _InputBoxState extends State<InputBox> {
     setState(() {
       if (textController.text != "") {
         tasks = [...tasks, textController.text];
-        saveData();
         textController.text = '';
-        print(tasks);
       }
     });
   }
 
   removeTodo(taskKey) {
-    print(taskKey);
     List filtered = tasks.where((element) => element != taskKey).toList();
-    print(filtered);
 
     setState(() {
       tasks = [...filtered];
     });
   }
 
-  saveData() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    // Save the counter value to persistent storage under the 'counter' key.
-    await prefs.setStringList('tasks', tasks);
-  }
-
   final textController = TextEditingController();
 
-  List<String> tasks = [];
+  List tasks = [];
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +59,12 @@ class _InputBoxState extends State<InputBox> {
             ),
           ),
         ),
-        FilledButton(onPressed: addTodo, child: const Text("add Task")),
+        FilledButton(
+          onPressed: () {
+            addTodo();
+          },
+          child: const Text("add Task"),
+        ),
         Padding(padding: EdgeInsetsGeometry.all(7)),
         for (int i = 0; i < tasks.length; i++)
           Row(
