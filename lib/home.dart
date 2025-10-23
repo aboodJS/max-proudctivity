@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -28,7 +29,7 @@ class _InputBoxState extends State<InputBox> {
     setState(() {
       if (textController.text != "") {
         tasks = [...tasks, textController.text];
-
+        saveData();
         textController.text = '';
         print(tasks);
       }
@@ -45,9 +46,25 @@ class _InputBoxState extends State<InputBox> {
     });
   }
 
+  saveData() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Save the counter value to persistent storage under the 'counter' key.
+    await prefs.setStringList('tasks', tasks);
+  }
+
+  readData() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Save the counter value to persistent storage under the 'counter' key.
+    setState(() {
+      tasks = prefs.getStringList('tasks');
+    });
+  }
+
   final textController = TextEditingController();
 
-  List tasks = [];
+  List<String> tasks = [];
 
   @override
   Widget build(BuildContext context) {
