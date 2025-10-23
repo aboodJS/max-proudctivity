@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -6,6 +7,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      darkTheme: ThemeData(brightness: Brightness.dark),
+      themeMode: ThemeMode.system,
       home: Scaffold(
         appBar: AppBar(title: Text("testing")),
         body: Column(children: [InputBox()]),
@@ -29,6 +32,7 @@ class _InputBoxState extends State<InputBox> {
           ...tasks,
           {"task": textController.text, "id": tasks.length},
         ];
+
         textController.text = '';
         print(tasks);
       }
