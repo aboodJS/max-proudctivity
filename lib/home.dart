@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -38,12 +37,12 @@ class _InputBoxState extends State<InputBox> {
       final file = await _localFile;
 
       // Read the file
-      final contents = await file.readAsString();
+      String contents = await file.readAsString();
 
-      print(contents);
+      return contents;
     } catch (e) {
       // If encountering an error, return 0
-      return 0;
+      print(e);
     }
   }
 
@@ -52,35 +51,39 @@ class _InputBoxState extends State<InputBox> {
     return File('$path/tasks.txt');
   }
 
-  Future<File> writeTasks(List list) async {
+  Future<File> writeTasks(String list) async {
     final file = await _localFile;
 
     // Write the file
-    return file.writeAsString('$list');
+    return file.writeAsString(list);
   }
 
   addTodo() {
     setState(() {
       if (textController.text != "") {
-        tasks = [...tasks, textController.text];
+        tasks = tasks + '${textController.text},';
         writeTasks(tasks);
+        print(textController.value.text);
         textController.text = '';
       }
     });
     showFile();
   }
 
-  removeTodo(taskKey) {
-    List filtered = tasks.where((element) => element != taskKey).toList();
+  // removeTodo(taskKey) {
+  //   List filtered = tasks.split(',').where((e) => e != "").toList();
 
-    setState(() {
-      tasks = [...filtered];
-    });
-  }
+  //   setState(() {
+  //     taskList = [...filtered];
+  //     writeTasks(tasks);
+  //   });
+  //   showFile();
+
+  // }
 
   final textController = TextEditingController();
 
-  List tasks = [];
+  var tasks = "";
 
   @override
   Widget build(BuildContext context) {
@@ -102,15 +105,22 @@ class _InputBoxState extends State<InputBox> {
           child: const Text("add Task"),
         ),
         Padding(padding: EdgeInsetsGeometry.all(7)),
-        for (int i = 0; i < tasks.length; i++)
+        for (
+          int i = 0;
+          i < tasks.split(',').where((e) => e != "").toList().length;
+          i++
+        )
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Text(key: Key("$i"), '${i + 1}. ${tasks[i]}'),
-              FilledButton(
-                onPressed: () => removeTodo(tasks[i]),
-                child: Text("check task"),
+              Text(
+                key: Key("$i"),
+                '${i + 1}. ${tasks.split(',').where((e) => e != "").toList()[i]}',
               ),
+              // FilledButton(
+              //   onPressed: () => removeTodo(taskList[i]),
+              //   child: Text("check task"),
+              // ),
             ],
           ),
       ],
