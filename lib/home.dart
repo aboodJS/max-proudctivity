@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
 class HomePage extends StatelessWidget {
@@ -32,46 +34,30 @@ class _InputBoxState extends State<InputBox> {
     return directory.path;
   }
 
-  showFile() async {
-    try {
-      final file = await _localFile;
-
-      // Read the file
-      String contents = await file.readAsString();
-
-      return contents;
-    } catch (e) {
-      // If encountering an error, return 0
-      print(e);
-    }
-  }
-
   Future<File> get _localFile async {
     final path = await _localPath;
     return File('$path/tasks.txt');
   }
 
+  var fileData;
+
   Future<File> writeTasks(String list) async {
-    final file = await _localFile;
+    fileData = await _localFile;
 
     // Write the file
-    return file.writeAsString(list);
+
+    return fileData.writeAsString(list, mode: FileMode.append);
   }
 
-  addTodo() {
-    setState(() {
-      if (textController.text != "") {
-        tasks = tasks + '${textController.text},';
-        writeTasks(tasks);
-        print(textController.value.text);
-        textController.text = '';
-      }
-    });
-    showFile();
+  showData() async {
+    writeTasks(textController.text);
+    print(await fileData.readAsString());
   }
 
-  // removeTodo(taskKey) {
-  //   List filtered = tasks.split(',').where((e) => e != "").toList();
+  // removeTodo(taskKey) async {
+  //   final file = await _localFile;
+
+  //   List filtered = file.writeAsString
 
   //   setState(() {
   //     taskList = [...filtered];
@@ -82,8 +68,6 @@ class _InputBoxState extends State<InputBox> {
   // }
 
   final textController = TextEditingController();
-
-  var tasks = "";
 
   @override
   Widget build(BuildContext context) {
@@ -98,31 +82,8 @@ class _InputBoxState extends State<InputBox> {
             ),
           ),
         ),
-        FilledButton(
-          onPressed: () {
-            addTodo();
-          },
-          child: const Text("add Task"),
-        ),
+        FilledButton(onPressed: showData, child: const Text("add Task")),
         Padding(padding: EdgeInsetsGeometry.all(7)),
-        for (
-          int i = 0;
-          i < tasks.split(',').where((e) => e != "").toList().length;
-          i++
-        )
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Text(
-                key: Key("$i"),
-                '${i + 1}. ${tasks.split(',').where((e) => e != "").toList()[i]}',
-              ),
-              // FilledButton(
-              //   onPressed: () => removeTodo(taskList[i]),
-              //   child: Text("check task"),
-              // ),
-            ],
-          ),
       ],
     );
   }
